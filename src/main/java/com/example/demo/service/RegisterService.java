@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.RegisterDTO;
+import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.entity.User;
+import com.example.demo.exception.EmailAlreadyExistsException;
 import com.example.demo.repository.RegisterRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +15,17 @@ public class RegisterService {
         this.registerRepository=registerRepository;
     }
 
-    public void registerUser(RegisterDTO registerDto) {
-         registerRepository.save(new User(registerDto));
+    public UserResponseDTO registerUser(RegisterDTO registerDto) {
+       User savedUser= registerRepository.save(new User(registerDto));
+       return new UserResponseDTO(savedUser.getId(),savedUser.getEmail());
     }
 
     public boolean userExists(String email) {
-       return registerRepository.existsByEmail(email);
+
+       if(registerRepository.existsByEmail(email))
+           throw new EmailAlreadyExistsException("User Already exists with this email id "+email);
+
+        return false;
     }
+
 }

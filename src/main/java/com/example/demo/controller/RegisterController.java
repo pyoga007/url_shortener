@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.RegisterDTO;
+import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.service.RegisterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,10 @@ public class RegisterController {
     }
 
     @PostMapping
-    public ResponseEntity add(@RequestBody RegisterDTO registerDto){
-        RegisterDTO registeredUser;
+    public ResponseEntity<UserResponseDTO> add(@RequestBody RegisterDTO registerDto){
         if(!registerService.userExists(registerDto.getEmail())){
-            registerService.registerUser(registerDto);
-            return new ResponseEntity<>(registerDto, HttpStatus.CREATED);
+           UserResponseDTO registeredUser= registerService.registerUser(registerDto);
+            return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
         }
 
             throw new RuntimeException("User already exists with emailId "+registerDto.getEmail());
